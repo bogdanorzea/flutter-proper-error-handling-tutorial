@@ -24,10 +24,23 @@ class PostService {
     try {
       final responseBody = await httpClient.getResponseBody();
       return Post.fromJson(responseBody);
-    } catch (e) {
-      print(e);
+    } on SocketException {
+      throw Failure('No internet connection');
+    } on HttpException {
+      throw Failure('Could not find the post');
+    } on FormatException {
+      throw Failure('Invalid response format');
     }
   }
+}
+
+class Failure {
+  final String message;
+
+  const Failure(this.message);
+
+  @override
+  String toString() => message;
 }
 
 class Post {
